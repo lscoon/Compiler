@@ -1,0 +1,180 @@
+../Test/1.cmm
+there is no error
+
+
+
+../Test/10.cmm
+there is no error
+
+
+
+../Test/11.cmm
+there is no error
+
+
+
+../Test/12.cmm
+there is no error
+
+
+
+../Test/13.cmm
+there is no error
+
+
+
+../Test/14.cmm
+there is no error
+
+
+
+../Test/15.cmm
+there is no error
+
+
+
+../Test/16.cmm
+there is no error
+
+
+
+../Test/17.cmm
+there is no error
+
+
+
+../Test/2.cmm
+there is no error
+
+
+
+../Test/3.cmm
+there is no error
+
+
+
+../Test/4.cmm
+there is no error
+
+
+
+../Test/5.cmm
+there is no error
+
+
+
+../Test/6.cmm
+there is no error
+
+
+
+../Test/7.cmm
+there is no error
+
+
+
+../Test/8.cmm
+there is no error
+
+
+
+../Test/9.cmm
+there is no error
+
+
+
+../Test/A1.cmm
+Error type B at line 4: Syntax error. 6
+
+
+../Test/A2.cmm
+Error type A at line 6: Mysterious character "~".
+Error type B at line 6: Syntax error. 6
+
+
+../Test/A3.cmm
+Error type B at line 7: Syntax error. 6
+
+
+../Test/A4.cmm
+Error type B at line 5: Syntax error. 6
+
+
+../Test/A5.cmm
+Error type B at line 3: Missing "]". 2
+
+
+../Test/A6.cmm
+Error type B at line 6: Missing "]".
+
+
+../Test/A7.cmm
+Error type B at line 8: Syntax error. 6
+
+
+../Test/A8.cmm
+Error type B at line 6: Syntax error. 3
+
+
+../Test/A9.cmm
+Error type B at line 8: Syntax error. 9
+
+
+../Test/B1.cmm
+Error type B at line 7: Syntax error. 3
+
+
+../Test/B2.cmm
+Error type B at line 2: Syntax error. 1
+Error type A at line 9: Mysterious character ":".
+Error type B at line 9: Missing ")". 5
+Error type B at line 14: Missing ")". 5
+Error type B at line 16: Missing ";". 4
+Error type B at line 22: Missing ";". 4
+
+
+../Test/C1.cmm
+there is no error
+
+
+
+../Test/C2.cmm
+there is no error
+
+
+
+../Test/D1.cmm
+there is no error
+
+
+
+../Test/D2.cmm
+Error type B at line 3: Syntax error. 6
+
+
+../Test/D3.cmm
+
+
+../Test/E1_1.cmm
+Error type A at Line 4: Illegal octal number '01826'
+
+
+../Test/E1_2.cmm
+Error type A at Line 3: Illegal hexadecimal number '0xFs396'
+Error type A at Line 4: Illegal hexadecimal number '0xxF396'
+
+
+../Test/E2_1.cmm
+Error type B at line 3: Syntax error. 6
+
+
+../Test/E2_2.cmm
+Error type B at line 3: Syntax error. 6
+
+
+../Test/E3_1.cmm
+
+
+../Test/E3_2.cmm
+
+
