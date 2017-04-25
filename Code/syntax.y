@@ -116,7 +116,7 @@ Stmt    : Exp SEMI                                      {$$=createNode("Stmt",""
 	| RETURN error SEMI				{errorNum++;myerror("Syntax error, after return");}
         | IF LP Exp RP Stmt %prec LOWER_THAN_ELSE       {$$=createNode("Stmt","");addChild(5, $$, $1, $2, $3, $4, $5);}
         | IF LP Exp RP Stmt ELSE Stmt                   {$$=createNode("Stmt","");addChild(7, $$, $1, $2, $3, $4, $5, $6, $7);}
-        //| IF LP Exp RP error ELSE Stmt                  {errorNum++;myerror("Missing \";\". 7");}
+        | IF LP Exp RP error ELSE Stmt                  {errorNum++;myerror("Missing \";\"");}
         | WHILE LP Exp RP Stmt                          {$$=createNode("Stmt","");addChild(5, $$, $1, $2, $3, $4, $5);}
 	| Exp error					{errorNum++;myerror("Syntax error, before \'}\'");}
         ;
@@ -129,6 +129,7 @@ DefList : Def DefList               {$$=createNode("DefList","");addChild(2, $$,
         ;
         
 Def     : Specifier DecList SEMI    {$$=createNode("Def","");addChild(3, $$, $1, $2, $3);}
+	| Specifier error SEMI	    {errorNum++;myerror("Syntax error, near \';\'");}
         ;
 
 DecList : Dec                       {$$=createNode("DecList","");addChild(1, $$, $1);}
@@ -153,7 +154,7 @@ Exp     : Exp ASSIGNOP Exp      {$$=createNode("Exp","");addChild(3, $$, $1, $2,
         | MINUS Exp             {$$=createNode("Exp","");addChild(2, $$, $1, $2);}
         | NOT Exp               {$$=createNode("Exp","");addChild(2, $$, $1, $2);}
         | ID LP Args RP         {$$=createNode("Exp","");addChild(4, $$, $1, $2, $3, $4);}
-	| ID LP error		{errorNum++;myerror("Syntax error, after \'(\'");}
+	    | ID LP error		    {errorNum++;myerror("Syntax error, after \'(\'");}
         | ID LP RP              {$$=createNode("Exp","");addChild(3, $$, $1, $2, $3);}
         | Exp LB Exp RB         {$$=createNode("Exp","");addChild(4, $$, $1, $2, $3, $4);}
         | Exp LB error 	        {errorNum++;myerror("Syntax error, near \'[\'");}
@@ -163,8 +164,8 @@ Exp     : Exp ASSIGNOP Exp      {$$=createNode("Exp","");addChild(3, $$, $1, $2,
         | FLOAT                 {$$=createNode("Exp","");addChild(1, $$, $1);}
         ;
     
-Args        : Exp COMMA Args        {$$=createNode("Exp","");addChild(3, $$, $1, $2, $3);}
-            | Exp                   {$$=createNode("Exp","");addChild(1, $$, $1);}
+Args        : Exp COMMA Args        {$$=createNode("Args","");addChild(3, $$, $1, $2, $3);}
+            | Exp                   {$$=createNode("Args","");addChild(1, $$, $1);}
             ;
 
 %%

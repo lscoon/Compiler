@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "semantic.h"
 #include "node.h"
 
 extern void yyrestart(FILE *);
@@ -35,7 +36,16 @@ int main(int argc, char** argv){
 
     if(errorNum == 0){
         //printf("there is no error\n\n");
-        printTree(Root,0);
+        initHashtable();
+        traverseTree(Root);
+        AllSymbol();//error happen when STRUCT Tag has not defined
+        //printTree(Root,0);
+        //if(lookupSymbol("a",ARRAY)!=NULL)
+         //   printf("ok1\n");
+        /*if(lookupSymbol("b",ARRAY)!=NULL)
+            printf("ok2\n");
+        if(lookupSymbol("c",BASIC)!=NULL)
+            printf("okok\n");*/
     }
 
     return 0;

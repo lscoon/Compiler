@@ -199,12 +199,8 @@ OTHER .
     
 }
 {COMMENT} {
-    //errorNum++;
-    //if(theSameLine2 != yylineno){
         printf("Error type A at line %d: Mysterious character \"%s\".\n",yylineno,yytext);
-        theSameLine2 = yylineno;
-    //}
-    
+        theSameLine2 = yylineno;  
 }
 
 
