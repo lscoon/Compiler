@@ -1,5 +1,6 @@
 #include "node.h"
-#include "semantic.h"
+#include "semantic.h" 
+
 
 FieldList hashTable[HASH_SIZE];
 
@@ -39,7 +40,7 @@ int insertSymbol(FieldList f){
 		return 1;	//redefine
 	}
 
-	while(true){
+	while(1){
 		key = (++key) % HASH_SIZE;
 		f->collision = f->collision + 1;
 		if(hashTable[key] == NULL){
@@ -599,6 +600,3 @@ TypePtr Exp(Node* root){
         return NULL;
     }
 }
-
-
-

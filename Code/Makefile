@@ -2,7 +2,7 @@
 # ************ 遇到不明白的地方请google以及阅读手册 *************
 
 # 编译器设定和编译选项
-CC = gcc -w
+CC = gcc
 FLEX = flex
 BISON = bison
 CFLAGS = -std=c99
@@ -34,14 +34,7 @@ syntax-c: $(YFILE)
 # 定义的一些伪目标
 .PHONY: clean test
 test:
-	touch test.out
-	rm test.out
-	touch test.out
-	for t in $(shell find ../Test/*); \
-		do 	echo "$$t" >> test.out; \
-			./parser "$$t" >> test.out; \
-			echo "\n" >> test.out; \
-		done
+	./parser ../Test/test1.cmm
 clean:
 	rm -f parser lex.yy.c syntax.tab.c syntax.tab.h syntax.output
 	rm -f $(OBJS) $(OBJS:.o=.d)

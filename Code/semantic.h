@@ -20,7 +20,7 @@ typedef enum Kind_ {
 typedef struct Type_ *TypePtr;
 typedef struct FieldList_ *FieldList;
 
-struct Type_ {
+typedef struct Type_ {
 
 	Kind kind;
 	union{
@@ -45,16 +45,16 @@ struct Type_ {
 		}function_;
 
 	}u;
-};
+}Type_;
 
-struct FieldList_ {
+typedef struct FieldList_ {
 	//Kind kind;
 	char *name;
 	TypePtr type;
 	FieldList tail;
 	//FieldList collision;
 	int collision;
-};
+}FieldList_;
 
 void traverseTree(Node *root);
 FieldList VarDec(Node *root,TypePtr basictype);

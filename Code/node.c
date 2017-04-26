@@ -4,6 +4,7 @@
 #include "node.h"
 #include "semantic.h"
 
+
 Node* createNode(char* name, char* text){
     Node *pnode = (Node*)malloc(sizeof(Node));
     strcpy(pnode->name, name);
