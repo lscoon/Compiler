@@ -50,7 +50,7 @@ int insertSymbol(FieldList f){
 	return 0;
 }
 
-FieldList lookupSymbol(char *name,bool function){
+FieldList lookupSymbol(char *name,int function){
 	if(name == NULL){
 		return NULL;
 	}
@@ -58,9 +58,9 @@ FieldList lookupSymbol(char *name,bool function){
 	FieldList p=hashTable[key];
 	while(p!=NULL){
 		if(strcmp(name,p->name)==0){
-			if((function)&&(p->type->kind==FUNCTION))
+			if((function==1)&&(p->type->kind==FUNCTION))
 				return p;
-			if((!(function))&&(p->type->kind!=FUNCTION))
+			if((function==0)&&(p->type->kind!=FUNCTION))
 				return p;
 		}
 		key=(++key)%HASH_SIZE;
@@ -75,53 +75,53 @@ void AllSymbol(){
 			printf("name:%s,kind:%d\n",hashTable[i]->name,hashTable[i]->type->kind);
 }
 
-bool TypeEqual(TypePtr type1,TypePtr type2){
+int TypeEqual(TypePtr type1,TypePtr type2){
 	if((type1==NULL)||(type2==NULL))
-		return false;
+		return 0;
 	if(type1->kind!=type2->kind)
-		return false;
+		return 0;
 	else switch(type1->kind){
 		case BASIC:{
 			if(type1->u.basic_==type2->u.basic_)
-				return true;
-			else return false;
+				return 1;
+			else return 0;
 		}break;
 		case ARRAY:{
-			if(TypeEqual(type1->u.array_.elem,type2->u.array_.elem))
-				return true;
-			else return false;
+			if(TypeEqual(type1->u.array_.elem,type2->u.array_.elem)==1)
+				return 1;
+			else return 0;
 		}break;
 		case STRUCTURE:{
 			FieldList field1=type1->u.structure_;
 			FieldList field2=type2->u.structure_;
 			if((field1!=NULL)&&(field2!=NULL)){
 				while((field1!=NULL)&&(field2!=NULL)){
-					if(!TypeEqual(field1->type,field2->type)){
-						return false;
+					if(TypeEqual(field1->type,field2->type)==0){
+						return 0;
 					}
 					field1=field1->tail;
 					field2=field2->tail;
 				}
 				if((field1==NULL)&&(field2==NULL))
-					return true;
+					return 1;
 			}
-			return false;
+			return 0;
 		}break;
 		case FUNCTION:{
 			if(type1->u.function_.paramNum!=type2->u.function_.paramNum)
-				return false;
+				return 0;
 			FieldList param1=type1->u.function_.params;
 			FieldList param2=type2->u.function_.params;
 			for(int i=0;i<type1->u.function_.paramNum;i++){
-				if(!TypeEqual(param1->type,param2->type))
-					return false;
+				if(TypeEqual(param1->type,param2->type)==0)
+					return 0;
 				param1=param1->tail;
 				param2=param2->tail;
 			}
-			return true;
+			return 1;
 		}break;
 		default:{
-			return false;
+			return 0;
 		}break;
 	}
 }
@@ -181,7 +181,7 @@ TypePtr Specifier(Node *root){
         spe->kind=STRUCTURE;
         if(root->child[0]->childsum==2){//STRUCT Tag
             char *s=root->child[0]->child[1]->child[0]->text;
-            FieldList field=lookupSymbol(s,false);
+            FieldList field=lookupSymbol(s,0);
             if(field==NULL){
                 printf("Error type 17 at Line %d: Undefined structure \"%s\".\n",root->lineno,s);
                 spe->u.structure_=NULL;
@@ -242,7 +242,7 @@ TypePtr Specifier(Node *root){
                 field->type=spe;
                 char *s=root->child[0]->child[1]->child[0]->text;//get the name of OptTag
                 field->name=s;
-                if(lookupSymbol(field->name,false)!=NULL)
+                if(lookupSymbol(field->name,0)!=NULL)
                     printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",root->lineno,field->name);
                 else insertSymbol(field);
             }
@@ -262,13 +262,13 @@ void ExtDefList(Node *root){
             FieldList field;
             while(temp->childsum==3){
                 field=VarDec(temp->child[0],basictype);
-                if(lookupSymbol(field->name,false)!=NULL)
+                if(lookupSymbol(field->name,0)!=NULL)
                     printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,field->name);
                 else insertSymbol(field);
                 temp=temp->child[2];
             }
             field=VarDec(temp->child[0],basictype);
-            if(lookupSymbol(field->name,false)!=NULL)
+            if(lookupSymbol(field->name,0)!=NULL)
                 printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,field->name);
             else insertSymbol(field);
         }
@@ -287,7 +287,7 @@ void ExtDefList(Node *root){
                 while(VarList->childsum!=1){//ParamDec COMMA VarList
                     TypePtr tempType=Specifier(VarList->child[0]->child[0]);
                     FieldList tempField=VarDec(VarList->child[0]->child[1],tempType);
-                    if(lookupSymbol(tempField->name,false)!=NULL)
+                    if(lookupSymbol(tempField->name,0)!=NULL)
                         printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,tempField->name);
                     else insertSymbol(tempField);
                     typ->u.function_.paramNum++;
@@ -298,7 +298,7 @@ void ExtDefList(Node *root){
                 }//ParamDec
                 TypePtr tempType=Specifier(VarList->child[0]->child[0]);
                 FieldList tempField=VarDec(VarList->child[0]->child[1],tempType);
-                if(lookupSymbol(tempField->name,false)!=NULL)
+                if(lookupSymbol(tempField->name,0)!=NULL)
                     printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,tempField->name);
                 else insertSymbol(tempField);
                 typ->u.function_.paramNum++;
@@ -306,7 +306,7 @@ void ExtDefList(Node *root){
                 typ->u.function_.params=tempField;
             }
             field->type=typ;
-            if(lookupSymbol(field->name,true)!=NULL)
+            if(lookupSymbol(field->name,1)!=NULL)
                 printf("Error type 4 at Line %d: Redefined function \"%s\".\n",ExtDef->lineno,field->name);
             else insertSymbol(field);
 
@@ -343,8 +343,8 @@ void DefList(Node *root){
         Node *DecList=Def->child[1];
         while(DecList->childsum==3){//Dec COMMA DecList
             FieldList field=VarDec(DecList->child[0]->child[0],basictype);
-            if(lookupSymbol(field->name,false)!=NULL){
-                if(lookupSymbol(field->name,false)->type->kind!=STRUCTURE)
+            if(lookupSymbol(field->name,0)!=NULL){
+                if(lookupSymbol(field->name,0)->type->kind!=STRUCTURE)
                    printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",DecList->lineno,field->name);
                 else printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",DecList->lineno,field->name);
             }
@@ -352,8 +352,8 @@ void DefList(Node *root){
             DecList=DecList->child[2];
         }
         FieldList field=VarDec(DecList->child[0]->child[0],basictype);
-        if(lookupSymbol(field->name,false)!=NULL){
-            if(lookupSymbol(field->name,false)->type->kind!=STRUCTURE)
+        if(lookupSymbol(field->name,0)!=NULL){
+            if(lookupSymbol(field->name,0)->type->kind!=STRUCTURE)
                printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",DecList->lineno,field->name);
             else printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",DecList->lineno,field->name);
         }
@@ -369,7 +369,7 @@ void Stmt(Node *root,TypePtr funcType){
     Node *Stmt_=root;
     if(strcmp(Stmt_->child[0]->name,"RETURN")==0){//RETURN Exp SEMI
         TypePtr returnType=Exp(Stmt_->child[1]);
-        if(!TypeEqual(funcType,returnType))
+        if(TypeEqual(funcType,returnType)==0)
             printf("Error type 8 at Line %d:Type mismatched for return.\n",Stmt_->lineno);
     }
     else if(strcmp(Stmt_->child[0]->name,"Exp")==0){//Exp
@@ -405,7 +405,7 @@ TypePtr Exp(Node* root){
     if(root==NULL)
         return NULL;
     else if((strcmp(root->child[0]->name,"ID")==0)&&(root->childsum==1)){//ID
-        FieldList field=lookupSymbol(root->child[0]->text,false);
+        FieldList field=lookupSymbol(root->child[0]->text,0);
         if(field!=NULL)
             return field->type;
         else{
@@ -431,7 +431,7 @@ TypePtr Exp(Node* root){
     else if((strcmp(root->child[1]->name,"PLUS")==0)||(strcmp(root->child[1]->name,"MINUS")==0)||(strcmp(root->child[1]->name,"STAR")==0)||(strcmp(root->child[1]->name,"DIV")==0)){
         TypePtr typ1=Exp(root->child[0]);
         TypePtr typ2=Exp(root->child[2]);
-        if(!TypeEqual(typ1,typ2)){
+        if(TypeEqual(typ1,typ2)==0){
             if((typ1!=NULL)&&(typ2!=NULL))
                 printf("Error type 7 at Line %d: Type mismatched for operands.\n",root->lineno);
             return NULL;
@@ -441,7 +441,7 @@ TypePtr Exp(Node* root){
     else if((strcmp(root->child[1]->name,"AND")==0)||(strcmp(root->child[1]->name,"OR")==0)||(strcmp(root->child[1]->name,"RELOP")==0)){
         TypePtr typ1=Exp(root->child[0]);
         TypePtr typ2=Exp(root->child[2]);
-        if(!TypeEqual(typ1,typ2)){
+        if(TypeEqual(typ1,typ2)==0){
             if((typ1!=NULL)&&(typ2!=NULL))
                 printf("Error type 7 at Line %d: Type mismatched for operands.\n",root->lineno);
             return NULL;
@@ -469,7 +469,7 @@ TypePtr Exp(Node* root){
         }
         TypePtr typ1=Exp(root->child[0]);
         TypePtr typ2=Exp(root->child[2]);
-        if(!TypeEqual(typ1,typ2)){
+        if(TypeEqual(typ1,typ2)==0){
             if((typ1!=NULL)&&(typ2!=NULL))
                 printf("Error type 5 at Line %d: Type mismatched for assignment.\n",root->lineno);
             return NULL;
@@ -477,9 +477,9 @@ TypePtr Exp(Node* root){
         else return typ1;
     }
     else if(strcmp(root->child[0]->name,"ID")==0){//ID LP RP
-        FieldList fie=lookupSymbol(root->child[0]->text,true);
+        FieldList fie=lookupSymbol(root->child[0]->text,1);
         if(fie==NULL){
-            FieldList fie2=lookupSymbol(root->child[0]->text,false);
+            FieldList fie2=lookupSymbol(root->child[0]->text,0);
             if(fie2!=NULL)
                 printf("Error type 11 at Line %d: \"%s\" is not a function.\n",root->lineno,root->child[0]->text);
             else printf("Error type 2 at Line %d: Undefined function \"%s\".\n",root->lineno,root->child[0]->text);
@@ -510,7 +510,7 @@ TypePtr Exp(Node* root){
             tempField->tail=typ->u.function_.params;
             typ->u.function_.params=tempField;
         }
-        if(!TypeEqual(typ,definedType)){
+        if(TypeEqual(typ,definedType)==0){
             printf("Error type 9 at Line %d: Params wrong in function \"%s\".\n",root->lineno,root->child[0]->text);
             return NULL;
         }
@@ -537,7 +537,7 @@ TypePtr Exp(Node* root){
                 }break;
                 default:s="error";break;
             }
-            if(lookupSymbol(s,false)!=NULL)
+            if(lookupSymbol(s,0)!=NULL)
                 printf("Error type 13 at Line %d: Illegal use of \".\".\n",root->lineno);
             return NULL;
         }
@@ -574,7 +574,7 @@ TypePtr Exp(Node* root){
                 }break;
                 default:s="error";break;
             }
-            if(lookupSymbol(s,false)!=NULL)
+            if(lookupSymbol(s,0)!=NULL)
                 printf("Error type 10 at Line %d: \"%s\" is not an array.\n",root->lineno,s);
             return NULL;
         }

@@ -68,8 +68,8 @@ TypePtr Exp(Node* root);
 unsigned int hash_pjw(char *name);
 void initHashtable();
 int insertSymbol(FieldList f);
-bool TypeEqual(TypePtr type1,TypePtr type2);
-FieldList lookupSymbol(char *name,bool function);//function true,varible false
+int TypeEqual(TypePtr type1,TypePtr type2);
+FieldList lookupSymbol(char *name,int function);//function 1,varible 0
 void AllSymbol();
 
 #endif
