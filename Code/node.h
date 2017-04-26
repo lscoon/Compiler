@@ -6,7 +6,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
-#include "semantic.h"
 
 #define MAX_CHILD_NUM 7
 extern int yylineno;
@@ -23,13 +22,4 @@ Node* createNode(char* name, char* text);
 void addChild(int childsum, Node* parent, ...);
 void printTree(Node *root, int blank);
 
-
-void traverseTree(Node *root);
-FieldList VarDec(Node *root,TypePtr basictype);
-TypePtr Specifier(Node *root);
-void ExtDefList(Node *root);
-void CompSt(Node *root,TypePtr funcType);
-void DefList(Node *root);
-void Stmt(Node *root,TypePtr funcType);
-TypePtr Exp(Node* root);
 #endif

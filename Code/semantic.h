@@ -4,15 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "node.h"
 
 #define HASH_SIZE 65536  
 
 #define INT_TYPE 1
 #define FLOAT_TYPE 2
 
+//enum bool{false,true};
 //typdef enum Kind
-
 typedef enum Kind_ {
 	BASIC, ARRAY, STRUCTURE, FUNCTION
 }Kind;
@@ -56,6 +56,14 @@ struct FieldList_ {
 	int collision;
 };
 
+void traverseTree(Node *root);
+FieldList VarDec(Node *root,TypePtr basictype);
+TypePtr Specifier(Node *root);
+void ExtDefList(Node *root);
+void CompSt(Node *root,TypePtr funcType);
+void DefList(Node *root);
+void Stmt(Node *root,TypePtr funcType);
+TypePtr Exp(Node* root);
 
 unsigned int hash_pjw(char *name);
 void initHashtable();

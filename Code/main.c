@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "semantic.h"
 #include "node.h"
+#include "semantic.h"
 
 extern void yyrestart(FILE *);
 extern int yyparse();
@@ -38,14 +38,8 @@ int main(int argc, char** argv){
         //printf("there is no error\n\n");
         initHashtable();
         traverseTree(Root);
-        AllSymbol();//error happen when STRUCT Tag has not defined
+        //AllSymbol();
         //printTree(Root,0);
-        //if(lookupSymbol("a",ARRAY)!=NULL)
-         //   printf("ok1\n");
-        /*if(lookupSymbol("b",ARRAY)!=NULL)
-            printf("ok2\n");
-        if(lookupSymbol("c",BASIC)!=NULL)
-            printf("okok\n");*/
     }
 
     return 0;
