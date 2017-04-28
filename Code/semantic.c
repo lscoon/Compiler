@@ -30,14 +30,13 @@ int insertSymbol(FieldList f){
 	if(f->name==NULL)
 		return 0;
 	f->collision = 0;
-	unsigned int key = hash_pjw(f->name);
+	unsigned int key;
+	if(f->type->kind==3)
+	     key= hash_pjw(1+f->name);
+	else key=hash_pjw(f->name);
 	if(hashTable[key] == NULL){
 		hashTable[key] = f;
 		return 1;
-	}
-	
-	if(strcmp(hashTable[key]->name, f->name)==0){
-		return 1;	//redefine
 	}
 
 	while(1){
@@ -55,7 +54,10 @@ FieldList lookupSymbol(char *name,int function){
 	if(name == NULL){
 		return NULL;
 	}
-	unsigned int key=hash_pjw(name);
+	unsigned int key;
+	if(function)
+	    key=hash_pjw(1+name);
+	else key=hash_pjw(name);
 	FieldList p=hashTable[key];
 	while(p!=NULL){
 		if(strcmp(name,p->name)==0){
@@ -272,20 +274,14 @@ void ExtDefList(Node *root){
             FieldList field;
             while(temp->childsum==3){
                 field=VarDec(temp->child[0],basictype);
-                if(lookupSymbol(field->name,0)!=NULL){
-                    if(field->type->kind!=STRUCTURE)
-                        printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,field->name);
-                    else printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",ExtDef->lineno,field->name);
-                }
+                if(lookupSymbol(field->name,0)!=NULL)
+                    printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,field->name);
                 else insertSymbol(field);
                 temp=temp->child[2];
             }
             field=VarDec(temp->child[0],basictype);
-            if(lookupSymbol(field->name,0)!=NULL){
-                if(field->type->kind!=STRUCTURE)
-                   printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,field->name);
-                else printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",ExtDef->lineno,field->name);
-            }
+            if(lookupSymbol(field->name,0)!=NULL)
+                printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",ExtDef->lineno,field->name);
             else insertSymbol(field);
         }
         else if(strcmp(ExtDef->child[1]->name,"FunDec")==0){//Specifier FunDec CompSt
@@ -358,22 +354,15 @@ void DefList(Node *root){
         Node *DecList=Def->child[1];
         while(DecList->childsum==3){//Dec COMMA DecList
             FieldList field=VarDec(DecList->child[0]->child[0],basictype);
-            if(lookupSymbol(field->name,0)!=NULL){
-                if(field->type->kind!=STRUCTURE)
-                   printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",DecList->lineno,field->name);
-                else printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",DecList->lineno,field->name);
-            }
+            if(lookupSymbol(field->name,0)!=NULL)
+                printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",DecList->lineno,field->name);
             else insertSymbol(field);
             DecList=DecList->child[2];
         }
         FieldList field=VarDec(DecList->child[0]->child[0],basictype);
-        if(lookupSymbol(field->name,0)!=NULL){
-            if(field->type->kind!=STRUCTURE)
-               printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",DecList->lineno,field->name);
-            else printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",DecList->lineno,field->name);
-        }
+        if(lookupSymbol(field->name,0)!=NULL)
+            printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",DecList->lineno,field->name);
         else insertSymbol(field);
-
         if(DefList->child[1]==NULL)//Def
             return;
         DefList=DefList->child[1];
