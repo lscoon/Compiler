@@ -215,8 +215,13 @@ TypePtr Specifier(Node *root){
                         temp=temp->tail;
                     }
                     if(temp==NULL){
-                        field->tail=spe->u.structure_;
-                        spe->u.structure_=field;
+			if(lookupSymbol(field->name,0)!=NULL)
+			    printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",Def->lineno,field->name);
+			else{
+			    insertSymbol(field);
+                            field->tail=spe->u.structure_;
+                            spe->u.structure_=field;
+			}
                     }
                     DecList=DecList->child[2];
                 }
@@ -232,10 +237,14 @@ TypePtr Specifier(Node *root){
                     temp=temp->tail;
                 }
                 if(temp==NULL){
-                    field->tail=spe->u.structure_;
-                    spe->u.structure_=field;
+		    if(lookupSymbol(field->name,0)!=NULL)
+		        printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",Def->lineno,field->name);
+		    else{
+			insertSymbol(field);
+                        field->tail=spe->u.structure_;
+                        spe->u.structure_=field;
+		    }
                 }
-
                 DefList=DefList->child[1];
             }
             if(root->child[0]->child[1]!=NULL){//OptTag exist
@@ -371,7 +380,7 @@ void Stmt(Node *root,TypePtr funcType){
     if(strcmp(Stmt_->child[0]->name,"RETURN")==0){//RETURN Exp SEMI
         TypePtr returnType=Exp(Stmt_->child[1]);
         if(TypeEqual(funcType,returnType)==0)
-            printf("Error type 8 at Line %d:Type mismatched for return.\n",Stmt_->lineno);
+            printf("Error type 8 at Line %d: Type mismatched for return.\n",Stmt_->lineno);
     }
     else if(strcmp(Stmt_->child[0]->name,"Exp")==0){//Exp
         Exp(Stmt_->child[0]);
@@ -382,21 +391,21 @@ void Stmt(Node *root,TypePtr funcType){
     else if(strcmp(Stmt_->child[0]->name,"WHILE")==0){//WHILE LP Exp RP Stmt
         TypePtr typ=Exp(Stmt_->child[2]);
         if(!((typ->kind==BASIC)&&(typ->u.basic_==INT_TYPE)))
-            printf("Error type 5 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
+            printf("Error type 5 at Line %d: Only type INT could be used for judgement.\n",Stmt_->lineno);
         Stmt(Stmt_->child[4],funcType);
     }
     else if(Stmt_->childsum<6){//IF LP Exp RP Stmt
         TypePtr typ=Exp(Stmt_->child[2]);
         if(typ!=NULL)
             if(!((typ->kind==BASIC)&&(typ->u.basic_==INT_TYPE)))
-                printf("Error type 5 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
+                printf("Error type 5 at Line %d: Only type INT could be used for judgement.\n",Stmt_->lineno);
 
         Stmt(Stmt_->child[4],funcType);
     }
     else{//IF LP Exp RP Stmt ELSE Stmt
         TypePtr typ=Exp(Stmt_->child[2]);
         if(!((typ->kind==BASIC)&&(typ->u.basic_==INT_TYPE)))
-            printf("Error type 5 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
+            printf("Error type 5 at Line %d: Only type INT could be used for judgement.\n",Stmt_->lineno);
         Stmt(Stmt_->child[4],funcType);
         Stmt(Stmt_->child[6],funcType);
     }
@@ -457,19 +466,19 @@ TypePtr Exp(Node* root){
     else if(strcmp(root->child[1]->name,"ASSIGNOP")==0){
         if(root->child[0]->childsum==1){
             if(!(strcmp(root->child[0]->child[0]->name,"ID")==0)){
-                printf("Error type 6 at Line %d: The left-hand size of an assignment must be a variable.\n",root->lineno);
+                printf("Error type 6 at Line %d: The left-hand side of an assignment must be a variable.\n",root->lineno);
                 return NULL;
             }
         }
         else if(root->child[0]->childsum==3){
             if(!((strcmp(root->child[0]->child[0]->name,"Exp")==0)&&(strcmp(root->child[0]->child[1]->name,"DOT")==0)&&(strcmp(root->child[0]->child[2]->name,"ID")==0))){
-                printf("Error type 6 at Line %d: The left-hand size of an assignment must be a variable.\n",root->lineno);
+                printf("Error type 6 at Line %d: The left-hand side of an assignment must be a variable.\n",root->lineno);
                 return NULL;
             }
         }
         else if(root->child[0]->childsum==4){
             if(!((strcmp(root->child[0]->child[0]->name,"Exp")==0)&&(strcmp(root->child[0]->child[1]->name,"LB")==0)&&(strcmp(root->child[0]->child[2]->name,"Exp")==0)&&(strcmp(root->child[0]->child[3]->name,"RB")==0))){
-                printf("Error type 6 at Line %d: The left-hand size of an assignment must be a variable.\n",root->lineno);
+                printf("Error type 6 at Line %d: The left-hand side of an assignment must be a variable.\n",root->lineno);
                 return NULL;
             }
         }
@@ -596,11 +605,7 @@ TypePtr Exp(Node* root){
             return NULL;
         }
         //no error
-        TypePtr var1=(TypePtr)malloc(sizeof(Type_));
-        var1->kind=ARRAY;
-        var1->u.array_.size=1;
-        var1->u.array_.elem=typ1;
-        return var1;
+        return typ1->u.array_.elem;
     }
     else{
         printf("in\n");
