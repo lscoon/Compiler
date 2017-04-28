@@ -11,8 +11,6 @@
 #define INT_TYPE 1
 #define FLOAT_TYPE 2
 
-//enum bool{false,true};
-//typdef enum Kind
 typedef enum Kind_ {
 	BASIC, ARRAY, STRUCTURE, FUNCTION
 }Kind;
@@ -40,7 +38,6 @@ typedef struct Type_ {
 		struct{
 			FieldList params;//parameters
 			TypePtr funcType;
-			//TypePtr returnType;
 			int paramNum;//number of parameters
 		}function_;
 
@@ -48,11 +45,9 @@ typedef struct Type_ {
 }Type_;
 
 typedef struct FieldList_ {
-	//Kind kind;
 	char *name;
 	TypePtr type;
 	FieldList tail;
-	//FieldList collision;
 	int collision;
 }FieldList_;
 
