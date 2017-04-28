@@ -382,21 +382,21 @@ void Stmt(Node *root,TypePtr funcType){
     else if(strcmp(Stmt_->child[0]->name,"WHILE")==0){//WHILE LP Exp RP Stmt
         TypePtr typ=Exp(Stmt_->child[2]);
         if(!((typ->kind==BASIC)&&(typ->u.basic_==INT_TYPE)))
-            printf("Error type 9 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
+            printf("Error type 5 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
         Stmt(Stmt_->child[4],funcType);
     }
     else if(Stmt_->childsum<6){//IF LP Exp RP Stmt
         TypePtr typ=Exp(Stmt_->child[2]);
         if(typ!=NULL)
             if(!((typ->kind==BASIC)&&(typ->u.basic_==INT_TYPE)))
-                printf("Error type 9 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
+                printf("Error type 5 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
 
         Stmt(Stmt_->child[4],funcType);
     }
     else{//IF LP Exp RP Stmt ELSE Stmt
         TypePtr typ=Exp(Stmt_->child[2]);
         if(!((typ->kind==BASIC)&&(typ->u.basic_==INT_TYPE)))
-            printf("Error type 9 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
+            printf("Error type 5 at Line %d:Only type INT could be used for judgement.\n",Stmt_->lineno);
         Stmt(Stmt_->child[4],funcType);
         Stmt(Stmt_->child[6],funcType);
     }
@@ -447,7 +447,12 @@ TypePtr Exp(Node* root){
                 printf("Error type 7 at Line %d: Type mismatched for operands.\n",root->lineno);
             return NULL;
         }
-        else return typ1;
+        else{
+	    TypePtr typ=(TypePtr)malloc(sizeof(Type_));
+	    typ->kind=BASIC;
+	    typ->u.basic_=INT_TYPE;
+  	    return typ;
+	}
     }
     else if(strcmp(root->child[1]->name,"ASSIGNOP")==0){
         if(root->child[0]->childsum==1){
@@ -498,6 +503,7 @@ TypePtr Exp(Node* root){
                 TypePtr tempType=Exp(temp->child[0]);
                 FieldList tempField=(FieldList )malloc(sizeof(FieldList_));
                 tempField->name="no";
+		tempField->type=tempType;
                 typ->u.function_.paramNum++;
                 tempField->tail=typ->u.function_.params;
                 typ->u.function_.params=tempField;
@@ -507,6 +513,7 @@ TypePtr Exp(Node* root){
             TypePtr tempType=Exp(temp->child[0]);
             FieldList tempField=(FieldList )malloc(sizeof(FieldList_));
             tempField->name="no";//just for temp compare
+	    tempField->type=tempType;
             typ->u.function_.paramNum++;
             tempField->tail=typ->u.function_.params;
             typ->u.function_.params=tempField;
