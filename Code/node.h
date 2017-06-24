@@ -9,9 +9,10 @@
 
 #define MAX_CHILD_NUM 7
 extern int yylineno;
+
 //抽象语法树
 typedef struct Abstract_Tree{
-    char name[32];  
+    char name[32];
     char text[32];
     int lineno;
     int childsum;

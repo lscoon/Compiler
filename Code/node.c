@@ -4,12 +4,10 @@
 #include "node.h"
 #include "semantic.h"
 
-
 Node* createNode(char* name, char* text){
     Node *pnode = (Node*)malloc(sizeof(Node));
     strcpy(pnode->name, name);
     strcpy(pnode->text, text);
-
     pnode->lineno = yylineno;
     for(int i=0;i<MAX_CHILD_NUM;i++){
         pnode->child[i] = NULL;
@@ -37,12 +35,14 @@ void printTree(Node *parent, int blank){
     for(int i=0;i<blank;i++){
         printf(" ");
     }
+    
     if(parent->childsum != 0){
         printf("%s (%d)\n", parent->name, parent->lineno);
         for(int i=0; i< parent->childsum; i++){
             printTree(parent->child[i],blank+2);
         }
-    }else{
+    }
+    else{
         if(strcmp(parent->name, "INT")==0){
             printf("%s: %d\n", parent->name, atoi(parent->text));
         }
@@ -67,7 +67,9 @@ void traverseTree(Node *root){
         return;
     }
 
-    if(root->childsum!=0)
-        for(int i=0;i<root->childsum;i++)
+    if(root->childsum!=0){
+        for(int i=0;i<root->childsum;i++){
             traverseTree(root->child[i]);
+        }
+    }
 }

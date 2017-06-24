@@ -6,6 +6,7 @@
     #include "syntax.tab.h"
     #include "node.h"
     extern int errorNum;
+	extern int structError;
     int theSameLine2 = 0;
 %}
 %option yylineno
@@ -129,6 +130,7 @@ OTHER .
     return RC;
 }
 {STRUCT}    {
+	structError++;
     yylval.node=createNode("STRUCT",yytext);
     return STRUCT;
 }
@@ -185,7 +187,6 @@ OTHER .
 }
 
 {ID}        {
-    
     yylval.node=createNode("ID",yytext);
     return ID;
 }

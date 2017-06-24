@@ -54,7 +54,7 @@ ExtDefList  : ExtDef ExtDefList     {$$=createNode("ExtDefList","");addChild(2, 
 ExtDef      : Specifier ExtDecList SEMI     {$$=createNode("ExtDef","");addChild(3, $$, $1, $2, $3);}
             | Specifier SEMI                {$$=createNode("ExtDef","");addChild(2, $$, $1, $2);}    
             | Specifier FunDec CompSt       {$$=createNode("ExtDef","");addChild(3, $$, $1, $2, $3);}
-	    | Specifier FunDec SEMI	    {errorNum++;myerror("Syntax error, near \';\'");}
+			| Specifier FunDec SEMI	    {errorNum++;myerror("Syntax error, near \';\'");}
             | Specifier error               {errorNum++;myerror("Syntax error, near \'}\'");}
             ;
 ExtDecList  : VarDec                        {$$=createNode("ExtDecList","");addChild(1, $$, $1);}
